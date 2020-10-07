@@ -1,11 +1,11 @@
-FROM alpine:3.6
+FROM alpine:edge
 
 ARG OPENSSL_FIPS_VER=2.0.16
 ARG OPENSSL_FIPS_HMACSHA1=e8dbfa6cb9e22a049ec625ffb7ccaf33e6116598
 ARG OPENSSL_FIPS_HASH=a3cd13d0521d22dd939063d3b4a0d4ce24494374b91408a05bdaca8b681c63d4
 ARG OPENSSL_FIPS_PGP_FINGERPRINT=D3577507FA40E9E2
-ARG OPENSSL_VER=1.0.2o
-ARG OPENSSL_HASH=ec3f5c9714ba0fd45cb4e087301eb1336c317e0d20b575a125050470e8089e4d
+ARG OPENSSL_VER=1.0.2u
+ARG OPENSSL_HASH=ecd0c6ffb493dd06707d38b14bb4d8c2288bb7033735606569d8f90f89669d16
 ARG OPENSSL_PGP_FINGERPRINT=D9C4D26D0E604491
 
 COPY test_fips.c /root/test_fips.c
@@ -18,7 +18,7 @@ RUN apk update \
     && openssl sha1 -hmac etaonrishdlcupfm openssl-fips-$OPENSSL_FIPS_VER.tar.gz | grep $OPENSSL_FIPS_HMACSHA1 \
     && apk del openssl \
     && wget --quiet https://www.openssl.org/source/openssl-fips-$OPENSSL_FIPS_VER.tar.gz.asc \
-    && gpg --keyserver hkp://pgp.mit.edu --recv $OPENSSL_FIPS_PGP_FINGERPRINT \
+    && gpg --keyserver pool.sks-keyservers.net --recv $OPENSSL_FIPS_PGP_FINGERPRINT \
     && gpg --verify openssl-fips-$OPENSSL_FIPS_VER.tar.gz.asc openssl-fips-$OPENSSL_FIPS_VER.tar.gz \
     && echo "$OPENSSL_FIPS_HASH openssl-fips-$OPENSSL_FIPS_VER.tar.gz" | sha256sum -c - | grep OK \
     && tar -xzf openssl-fips-$OPENSSL_FIPS_VER.tar.gz \
@@ -29,7 +29,7 @@ RUN apk update \
     && cd .. \
     && wget --quiet https://www.openssl.org/source/openssl-$OPENSSL_VER.tar.gz \
     && wget --quiet https://www.openssl.org/source/openssl-$OPENSSL_VER.tar.gz.asc \
-    && gpg --keyserver hkp://pgp.mit.edu --recv $OPENSSL_PGP_FINGERPRINT \
+    && gpg --keyserver pool.sks-keyservers.net --recv $OPENSSL_PGP_FINGERPRINT \
     && gpg --verify openssl-$OPENSSL_VER.tar.gz.asc \
     && echo "$OPENSSL_HASH openssl-$OPENSSL_VER.tar.gz" | sha256sum -c - | grep OK \
     && tar -xzf openssl-$OPENSSL_VER.tar.gz \
